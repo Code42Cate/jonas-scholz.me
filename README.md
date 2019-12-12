@@ -5,4 +5,3 @@ This is my personal website, inspired by [Andrew Barfield](https://codepen.io/An
 TODO: 
 -   Autocomplete
 -   Only-Text Resume
--   Remove jQuery:D
