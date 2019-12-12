@@ -1,88 +1,78 @@
-var util = util || {}
-util.toArray = function (list) {
-  return Array.prototype.slice.call(list || [], 0)
-}
-
 var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
-  window.URL = window.URL || window.webkitURL
-  window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem
+  var cmdLine = document.querySelector(cmdLineContainer)
+  var output = document.querySelector(outputContainer)
 
-  var cmdLine_ = document.querySelector(cmdLineContainer)
-  var output_ = document.querySelector(outputContainer)
-
-  const CMDS_ = [
+  const COMMANDS = [
     'help', 'clear', 'date', 'ls', 'cat'
   ]
 
-  const FILES_ = [
+  const FILES = [
     'resume.txt', 'about.txt', 'contact.txt', 'source.txt'
   ]
 
-  var fs_ = null
-  var cwd_ = null
-  var history_ = []
-  var histpos_ = 0
-  var histtemp_ = 0
+  const history = []
+  let historyPos = 0
+  let historyTemp = 0
 
   window.addEventListener('click', function (e) {
-    cmdLine_.focus()
+    cmdLine.focus()
   }, false)
 
-  cmdLine_.addEventListener('click', inputTextClick_, false)
-  cmdLine_.addEventListener('keydown', historyHandler_, false)
-  cmdLine_.addEventListener('keydown', processNewCommand_, false)
+  cmdLine.addEventListener('click', inputTextClick, false)
+  cmdLine.addEventListener('keydown', historyHandler, false)
+  cmdLine.addEventListener('keydown', processNewCommand, false)
 
-  function inputTextClick_ (e) {
+  function inputTextClick (e) {
     this.value = this.value
   }
 
-  function historyHandler_ (e) {
-    if (history_.length) {
+  function historyHandler (e) {
+    if (history.length > 0) {
       if (e.keyCode == 38 || e.keyCode == 40) {
-        if (history_[histpos_]) {
-          history_[histpos_] = this.value
+        if (history[historyPos]) {
+          history[historyPos] = this.value
         } else {
-          histtemp_ = this.value
+          historyTemp = this.value
         }
       }
 
       if (e.keyCode == 38) { // up
-        histpos_--
-        if (histpos_ < 0) {
-          histpos_ = 0
+        historyPos += -1
+        if (historyPos < 0) {
+          historyPos = 0
         }
       } else if (e.keyCode == 40) { // down
-        histpos_++
-        if (histpos_ > history_.length) {
-          histpos_ = history_.length
+        historyPos += 1
+        if (historyPos > history.length) {
+          historyPos = history.length
         }
       }
 
       if (e.keyCode == 38 || e.keyCode == 40) {
-        this.value = history_[histpos_] ? history_[histpos_] : histtemp_
+        this.value = history[historyPos] ? history[historyPos] : historyTemp
         this.value = this.value; // Sets cursor to end of input.
       }
     }
   }
 
-  function processNewCommand_ (e) {
+  function processNewCommand (e) {
     if (e.keyCode == 9) { // tab
       e.preventDefault()
     } else if (e.keyCode == 13) { // enter
       // Save shell history.
       if (this.value) {
-        history_[history_.length] = this.value
-        histpos_ = history_.length
+        history[history.length] = this.value
+        historyPos = history.length
       }
 
       // Duplicate current input and append to output section.
-      var line = this.parentNode.parentNode.cloneNode(true)
+      let line = this.parentNode.parentNode.cloneNode(true)
       line.removeAttribute('id')
       line.classList.add('line')
-      var input = line.querySelector('input.cmdline')
+      let input = line.querySelector('input.cmdline')
       input.autofocus = false
       input.readOnly = true
-      output_.appendChild(line)
+      output.appendChild(line)
 
       if (this.value && this.value.trim()) {
         var args = this.value.split(' ').filter(function (val, i) {
@@ -96,21 +86,21 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
         case 'cat':
           var url = args.join(' ')
           if (!url) {
-            output('Usage: ' + cmd + ' resume.txt')
+            writeOutput(`Usage: ${cmd} resume.txt`)
             break
           }
           switch (url) {
             case 'source.txt':
-              output('This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>')
+              writeOutput('This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>')
               break
             case 'resume.txt':
-              output('My resume looks best as a pdf! <a href="https://www.jonas-scholz.me/Jonas_Scholz_Resume_2019.pdf" target="_blank"> You can check it out here </a>')
+              writeOutput('My resume looks best as a pdf! <a href="https://www.jonas-scholz.me/Jonas_Scholz_Resume_2019.pdf" target="_blank"> You can check it out here </a>')
               break
             case 'contact.txt':
-              output('Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>')
+              writeOutput('Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>')
               break
             case 'about.txt':
-              output(`Hey there, nice to meet you! My name is Jonas, my friends usually call me Marty though.<br><br>
+              writeOutput(`Hey there, nice to meet you! My name is Jonas, my friends usually call me Marty though.<br><br>
               I am a 19 year old computer science student at KIT (Karlsruhe, Germany) and a software engineering freelancer.<br>
               My focus lies on the backend site of things.
               I love building secure, efficient and scalable infrastructure for businesses.<br><br>
@@ -126,49 +116,40 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
               `)
               break
             default:
-              output('cat: ' + url + ': No such file or directory')
+              writeOutput(`cat: ${url}: No such file or directory`)
           }
           break
         case 'clear':
-          output_.innerHTML = ''
+          output.innerHTML = ''
           this.value = ''
-          output('Jonas Scholz | Terminal</h2><p>' + new Date() + '</p><p>Enter "help" for more information!</p>')
+          writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)
           return
         case 'date':
-          output(new Date())
+          writeOutput(new Date())
           break
         case 'help':
-          output('<div class="ls-files">' + CMDS_.join('<br>') + '</div>')
+          writeOutput(`<div class="ls-files">${COMMANDS.join('<br>')}</div>`)
           break
         case 'ls':
-          output('<div class="ls-files">' + FILES_.join('<br>') + '</div>')
+          writeOutput(`<div class="ls-files">${FILES.join('<br>')}</div>`)
           break
         default:
           if (cmd) {
-            output(cmd + ': command not found')
+            writeOutput(`${cmd}: command not found`)
           }
       }
-      window.scrollTo(0, getDocHeight_())
-      this.value = ''; // Clear/setup line for next input.
+      window.scrollTo(0, document.body.scrollHeight)
+      this.value = ''
     }
   }
 
-  function output (html) {
-    output_.insertAdjacentHTML('beforeEnd', '<p>' + html + '</p>')
-  }
-
-  function getDocHeight_ () {
-    var d = document
-    return Math.max(
-      Math.max(d.body.scrollHeight, d.documentElement.scrollHeight),
-      Math.max(d.body.offsetHeight, d.documentElement.offsetHeight),
-      Math.max(d.body.clientHeight, d.documentElement.clientHeight)
-    )
+  function writeOutput (html) {
+    output.insertAdjacentHTML('beforeEnd', `<p>${html}</p>`)
   }
 
   return {
     init: function () {
-      output('Jonas Scholz | Terminal</h2><p>' + new Date() + '</p><p>Enter "help" for more information!</p>');    },
-    output: output
+      writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)
+    }
   }
 }
