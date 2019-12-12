@@ -148,7 +148,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             output(cmd + ': command not found')
           }
       }
-
       window.scrollTo(0, getDocHeight_())
       this.value = ''; // Clear/setup line for next input.
     }
@@ -158,7 +157,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     output_.insertAdjacentHTML('beforeEnd', '<p>' + html + '</p>')
   }
 
-  // Cross-browser impl to get document's height.
   function getDocHeight_ () {
     var d = document
     return Math.max(
