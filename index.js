@@ -114,7 +114,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
               I am a 19 year old computer science student at KIT (Karlsruhe, Germany) and a software engineering freelancer.<br>
               My focus lies on the backend site of things.
               I love building secure, efficient and scalable infrastructure for businesses.<br><br>
-              I have experience in developing scalable APIs and website-backends, (non-)relational databases (MongoDB, SQL) and micro services to improve <i>your</i> business processes.<br>
+              I have experience in developing scalable APIs, website-backends and online fraud detection systems, (non-)relational databases (MongoDB, SQL) and micro services to improve <i>your</i> business processes.<br>
               Most of my bigger projects are written in Go, JavaScript or Python and are hosted with Google Cloud / AWS / Digitalocean. Often times with docker && CI/CD to make the development and scaling easier!
               <br><br>              
               Code quality and high productivity are important to me. I value good tests, clean code and CI/CD pipelines that make my teams life easier.
