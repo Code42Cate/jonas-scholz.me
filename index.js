@@ -9,7 +9,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   const FILES = [
     'resume.txt', 'about.txt', 'contact.txt', 'source.txt'
   ]
-  const FILES_ = {
+  const FILES_OUTPUT = {
     'resume.txt': 'My resume looks best as a pdf! <a href="https://www.jonas-scholz.me/Jonas_Scholz_Resume_2019.pdf" target="_blank"> You can check it out here </a>',
     'about.txt': `Hey there, nice to meet you! My name is Jonas, my friends usually call me Marty though.<br><br>
     I am a 19 year old computer science student at KIT (Karlsruhe, Germany) and a software engineering freelancer.<br>
@@ -36,9 +36,30 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     cmdLine.focus()
   }, false)
 
+  cmdLine.addEventListener('input', autoComplete, false)
   cmdLine.addEventListener('click', inputTextClick, false)
   cmdLine.addEventListener('keydown', historyHandler, false)
   cmdLine.addEventListener('keydown', processNewCommand, false)
+
+  let currentWord = ''
+  let prediction
+  function autoComplete (e) {
+    const splittedLine = document.getElementById('cmdLine').value.split(/\s/)
+    if (splittedLine.length !== 2 || splittedLine[0] !== 'cat' || e.data === ' ') return
+
+    if (e.inputType === 'deleteContentBackward') {
+      currentWord = currentWord.substring(0, currentWord.length - 1)
+    } else {
+      currentWord += e.data
+    }
+
+    const suggestions = FILES.filter((fn) => fn.startsWith(currentWord))
+    if (suggestions.length === 1) {
+      prediction = suggestions[0]
+    } else {
+      prediction = undefined
+    }
+  }
 
   function inputTextClick (e) {
     this.value = this.value
@@ -75,6 +96,9 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
 
   function processNewCommand (e) {
     if (e.keyCode == 9) { // tab
+      if (prediction !== undefined) {
+        this.value = `cat ${prediction}`
+      }
       e.preventDefault()
     } else if (e.keyCode == 13) { // enter
       // Save shell history.
@@ -93,7 +117,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
       output.appendChild(line)
 
       if (this.value && this.value.trim()) {
-        var args = this.value.split(' ').filter(function (val, i) {
+        var args = this.value.split(' ').filter((val, i) => {
           return val
         })
         var cmd = args[0].toLowerCase()
@@ -107,9 +131,8 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             writeOutput(`Usage: ${cmd} resume.txt`)
             break
           }
-          
-          if (FILES_[url] !== undefined) {
-            writeOutput(FILES_[url])
+          if (FILES_OUTPUT[url] !== undefined) {
+            writeOutput(FILES_OUTPUT[url])
           } else {
             writeOutput(`cat: ${url}: No such file or directory`)
           }
