@@ -9,6 +9,24 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   const FILES = [
     'resume.txt', 'about.txt', 'contact.txt', 'source.txt'
   ]
+  const FILES_ = {
+    'resume.txt': 'My resume looks best as a pdf! <a href="https://www.jonas-scholz.me/Jonas_Scholz_Resume_2019.pdf" target="_blank"> You can check it out here </a>',
+    'about.txt': `Hey there, nice to meet you! My name is Jonas, my friends usually call me Marty though.<br><br>
+    I am a 19 year old computer science student at KIT (Karlsruhe, Germany) and a software engineering freelancer.<br>
+    My focus lies on the backend site of things.
+    I love building secure, efficient and scalable infrastructure for businesses.<br><br>
+    I have experience in developing scalable APIs, website-backends and online fraud detection systems, (non-)relational databases (MongoDB, SQL) and micro services to improve <i>your</i> business processes.<br>
+    Most of my bigger projects are written in Go, JavaScript or Python and are hosted with Google Cloud / AWS / Digitalocean. Often times with docker && CI/CD to make the development and scaling easier!
+    <br><br>              
+    Code quality and high productivity are important to me. I value good tests, clean code and CI/CD pipelines that make my teams life easier.
+    <br>
+    If you're not sure if I am the right fit for your project, take a look at my resume or just hit me up and we can chat about your plans!
+    <br><br>
+    Cheers, Jonas<br><br><br>
+    PS: Use "cat resume.txt" to see my resume, or "cat contact.txt" for my contact details!`,
+    'contact.txt': 'Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>',
+    'source.txt': 'This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>'
+  }
 
   const history = []
   let historyPos = 0
@@ -89,34 +107,11 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             writeOutput(`Usage: ${cmd} resume.txt`)
             break
           }
-          switch (url) {
-            case 'source.txt':
-              writeOutput('This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>')
-              break
-            case 'resume.txt':
-              writeOutput('My resume looks best as a pdf! <a href="https://www.jonas-scholz.me/Jonas_Scholz_Resume_2019.pdf" target="_blank"> You can check it out here </a>')
-              break
-            case 'contact.txt':
-              writeOutput('Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>')
-              break
-            case 'about.txt':
-              writeOutput(`Hey there, nice to meet you! My name is Jonas, my friends usually call me Marty though.<br><br>
-              I am a 19 year old computer science student at KIT (Karlsruhe, Germany) and a software engineering freelancer.<br>
-              My focus lies on the backend site of things.
-              I love building secure, efficient and scalable infrastructure for businesses.<br><br>
-              I have experience in developing scalable APIs, website-backends and online fraud detection systems, (non-)relational databases (MongoDB, SQL) and micro services to improve <i>your</i> business processes.<br>
-              Most of my bigger projects are written in Go, JavaScript or Python and are hosted with Google Cloud / AWS / Digitalocean. Often times with docker && CI/CD to make the development and scaling easier!
-              <br><br>              
-              Code quality and high productivity are important to me. I value good tests, clean code and CI/CD pipelines that make my teams life easier.
-              <br>
-              If you're not sure if I am the right fit for your project, take a look at my resume or just hit me up and we can chat about your plans!
-              <br><br>
-              Cheers, Jonas<br><br><br>
-              PS: Use "cat resume.txt" to see my resume, or "cat contact.txt" for my contact details!
-              `)
-              break
-            default:
-              writeOutput(`cat: ${url}: No such file or directory`)
+          
+          if (FILES_[url] !== undefined) {
+            writeOutput(FILES_[url])
+          } else {
+            writeOutput(`cat: ${url}: No such file or directory`)
           }
           break
         case 'clear':
