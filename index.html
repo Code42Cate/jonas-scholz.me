@@ -21,9 +21,9 @@
     <script src="index.js"></script>
 </body>
 <script>
-    document.getElementById('prompt').innerHTML = '[user@jonas-scholz.me] $ ';
-    var term = new Terminal('#input-line .cmdline', '#container output');
-    term.init();
+    document.getElementById('prompt').innerHTML = '[user@jonas-scholz.me] $ '
+    const term = new Terminal('#input-line .cmdline', '#container output')
+    term.init()
 </script>
 
 </html>

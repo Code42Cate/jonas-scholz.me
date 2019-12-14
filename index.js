@@ -27,30 +27,31 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     'contact.txt': 'Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>',
     'source.txt': 'This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>'
   }
-
+  // global vars
   const history = []
   let historyPos = 0
   let historyTemp = 0
+  let currentWord = ''
+  let prediction
 
   window.addEventListener('click', function (e) {
     cmdLine.focus()
   }, false)
 
   cmdLine.addEventListener('input', autoComplete, false)
-  cmdLine.addEventListener('click', inputTextClick, false)
   cmdLine.addEventListener('keydown', historyHandler, false)
   cmdLine.addEventListener('keydown', processNewCommand, false)
 
-  let currentWord = ''
-  let prediction
+
+  // This is very inefficient and nooby, I KNOW. Don't copy. Do it correctly.
   function autoComplete (e) {
     const splittedLine = document.getElementById('cmdLine').value.split(/\s/)
     if (splittedLine.length !== 2 || splittedLine[0] !== 'cat' || e.data === ' ') return
 
     if (e.inputType === 'deleteContentBackward') {
-      currentWord = currentWord.substring(0, currentWord.length - 1)
+      currentWord = currentWord.substring(0, currentWord.length - 1)  // remove last added char
     } else {
-      currentWord += e.data
+      currentWord += e.data // add new char
     }
 
     const suggestions = FILES.filter((fn) => fn.startsWith(currentWord))
@@ -61,86 +62,79 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     }
   }
 
-  function inputTextClick (e) {
-    this.value = this.value
-  }
-
+  // keydown 
   function historyHandler (e) {
-    if (history.length > 0) {
-      if (e.keyCode == 38 || e.keyCode == 40) {
-        if (history[historyPos]) {
-          history[historyPos] = this.value
-        } else {
-          historyTemp = this.value
-        }
-      }
+    if (history.length == 0) return // Don't do anything if there's no history
 
-      if (e.keyCode == 38) { // up
-        historyPos += -1
-        if (historyPos < 0) {
-          historyPos = 0
-        }
-      } else if (e.keyCode == 40) { // down
-        historyPos += 1
-        if (historyPos > history.length) {
-          historyPos = history.length
-        }
-      }
-
-      if (e.keyCode == 38 || e.keyCode == 40) {
-        this.value = history[historyPos] ? history[historyPos] : historyTemp
-        this.value = this.value; // Sets cursor to end of input.
+    if (e.keyCode == 38 || e.keyCode == 40) { // Arrow up/down?
+      if (history[historyPos]) {
+        history[historyPos] = this.value
+      } else {
+        historyTemp = this.value
       }
     }
+
+    // increment decrement historyPos
+    if (e.keyCode == 38) { // up
+      historyPos += -1
+      if (historyPos < 0) {
+        historyPos = 0
+      }
+    } else if (e.keyCode == 40) { // down
+      historyPos += 1
+      if (historyPos > history.length) {
+        historyPos = history.length
+      }
+    }
+
+    if (e.keyCode == 38 || e.keyCode == 40) { // Array up/down? No set the actual cmd line value
+      this.value = history[historyPos] ? history[historyPos] : historyTemp
+    }
+
   }
 
   function processNewCommand (e) {
-    if (e.keyCode == 9) { // tab
-      if (prediction !== undefined) {
-        this.value = `cat ${prediction}`
-      }
+    if (e.keyCode == 9) { // Tab
       e.preventDefault()
-    } else if (e.keyCode == 13) { // enter
-      // Save shell history.
-      if (this.value) {
+      if (prediction !== undefined) {
+        this.value = `cat ${prediction}`  // Easier than to parse the input correctly
+      }
+    } else if (e.keyCode == 13) { // Enter
+      if (this.value) { // Save shell history if value exists
         history[history.length] = this.value
         historyPos = history.length
       }
 
       // Duplicate current input and append to output section.
-      let line = this.parentNode.parentNode.cloneNode(true)
+      const line = this.parentNode.parentNode.cloneNode(true)
       line.removeAttribute('id')
       line.classList.add('line')
-      let input = line.querySelector('input.cmdline')
+      // OLD input line.
+      const input = line.querySelector('input.cmdline')
       input.autofocus = false
       input.readOnly = true
+
       output.appendChild(line)
 
       if (this.value && this.value.trim()) {
-        var args = this.value.split(' ').filter((val, i) => {
-          return val
-        })
+        var args = this.value.split(/\s/)
         var cmd = args[0].toLowerCase()
         args = args.splice(1); // Remove cmd from arg list.
       }
 
       switch (cmd) {
         case 'cat':
-          var url = args.join(' ')
+          const url = args.join(' ')
           if (!url) {
-            writeOutput(`Usage: ${cmd} resume.txt`)
+            writeOutput('Usage: cat resume.txt')
             break
           }
-          if (FILES_OUTPUT[url] !== undefined) {
-            writeOutput(FILES_OUTPUT[url])
-          } else {
-            writeOutput(`cat: ${url}: No such file or directory`)
-          }
+          writeOutput(FILES_OUTPUT[url] !== undefined ? FILES_OUTPUT[url]: `cat: ${url}: No such file or directory`)
           break
         case 'clear':
           output.innerHTML = ''
           this.value = ''
-          writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)
+          writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)  // Basically new init()
           return
         case 'date':
           writeOutput(new Date())
@@ -156,7 +150,9 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             writeOutput(`${cmd}: command not found`)
           }
       }
+      // Scroll down if needed
       window.scrollTo(0, document.body.scrollHeight)
+      // Reset
       this.value = ''
     }
   }
