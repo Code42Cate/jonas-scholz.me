@@ -15,15 +15,30 @@
         <output></output>
         <div id="input-line" class="input-line">
             <div class="prompt" id="prompt"></div>
-            <div><input class="cmdline" autofocus id="cmdLine"/></div>
+            <div><input class="cmdline" autofocus id="cmdLine" /></div>
         </div>
     </div>
     <script src="index.js"></script>
 </body>
 <script>
-    document.getElementById('prompt').innerHTML = '[user@jonas-scholz.me] $ '
-    const term = new Terminal('#input-line .cmdline', '#container output')
-    term.init()
+    function supportES6() {
+        try {
+            new Function('(a = 0) => a');
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    if (!supportES6()) {
+        document.getElementById('prompt').innerHTML = '[user@jonas-scholz.me] $ '
+        document.getElementById('cmdLine').value = 'Your browser does not support certain ES2015 features which this website needs. Please upgrade your browser.'
+    } else {
+        document.getElementById('prompt').innerHTML = '[user@jonas-scholz.me] $ '
+        const term = new Terminal('#input-line .cmdline', '#container output')
+        term.init()
+    }
+
 </script>
 
 </html>

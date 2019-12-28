@@ -34,7 +34,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   let currentWord = ''
   let prediction
 
-  window.addEventListener('click', function (e) {
+  window.addEventListener('click', (e) => {
     cmdLine.focus()
   }, false)
 
@@ -43,7 +43,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   cmdLine.addEventListener('keydown', processNewCommand, false)
 
 
-  // This is very inefficient and nooby, I KNOW. Don't copy. Do it correctly.
   function autoComplete (e) {
     const splittedLine = document.getElementById('cmdLine').value.split(/\s/)
     if (splittedLine.length !== 2 || splittedLine[0] !== 'cat' || e.data === ' ') return
