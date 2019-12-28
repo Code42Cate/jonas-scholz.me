@@ -31,35 +31,15 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   const history = []
   let historyPos = 0
   let historyTemp = 0
-  let currentWord = ''
-  let prediction
 
   window.addEventListener('click', (e) => {
     cmdLine.focus()
   }, false)
 
-  cmdLine.addEventListener('input', autoComplete, false)
   cmdLine.addEventListener('keydown', historyHandler, false)
   cmdLine.addEventListener('keydown', processNewCommand, false)
 
 
-  function autoComplete (e) {
-    const splittedLine = document.getElementById('cmdLine').value.split(/\s/)
-    if (splittedLine.length !== 2 || splittedLine[0] !== 'cat' || e.data === ' ') return
-
-    if (e.inputType === 'deleteContentBackward') {
-      currentWord = currentWord.substring(0, currentWord.length - 1)  // remove last added char
-    } else {
-      currentWord += e.data // add new char
-    }
-
-    const suggestions = FILES.filter((fn) => fn.startsWith(currentWord))
-    if (suggestions.length === 1) {
-      prediction = suggestions[0]
-    } else {
-      prediction = undefined
-    }
-  }
 
   // keydown 
   function historyHandler (e) {
@@ -95,9 +75,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   function processNewCommand (e) {
     if (e.keyCode == 9) { // Tab
       e.preventDefault()
-      if (prediction !== undefined) {
-        this.value = `cat ${prediction}`  // Easier than to parse the input correctly
-      }
     } else if (e.keyCode == 13) { // Enter
       if (this.value) { // Save shell history if value exists
         history[history.length] = this.value
