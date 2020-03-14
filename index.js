@@ -24,7 +24,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     <br><br>
     Cheers, Jonas<br><br><br>
     PS: Use "cat resume.txt" to see my resume, or "cat contact.txt" for my contact details!`,
-    'contact.txt': 'Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate">GitHub profile</a>',
+    'contact.txt': 'Feel free to reach out! You can <a href="mailto:info@jonas-scholz.me">send me a mail</a> or DM me on <a href="https://twitter.com/MartyInTheCloud" target="_blank">Twitter</a>. I also have a <a href="https://github.com/Code42Cate" target="_blank">GitHub profile</a>',
     'source.txt': 'This website was inspired by <a href="https://codepen.io/AndrewBarfield" target="_blank">Andrew Barfield</a>. You can find my fork/source on <a href="https://github.com/Code42Cate/personal-website" target="_blank">GitHub</a>'
   }
   // global vars
