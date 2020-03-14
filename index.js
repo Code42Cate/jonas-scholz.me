@@ -139,7 +139,10 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
 
   return {
     init: function () {
-      writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)
+      writeOutput(`Jonas Scholz | Terminal</h2><p id="date">${new Date()}</p><p>Enter "help" for more information! <a href="text.html">Text only version</a></p>`)
+      setInterval(function () {
+        document.getElementById("date").innerHTML = new Date();
+      }, 1000);
     }
   }
 }
