@@ -39,8 +39,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
   cmdLine.addEventListener('keydown', historyHandler, false)
   cmdLine.addEventListener('keydown', processNewCommand, false)
 
-
-
   // keydown 
   function historyHandler (e) {
     if (history.length == 0) return // Don't do anything if there's no history
@@ -69,7 +67,6 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
     if (e.keyCode == 38 || e.keyCode == 40) { // Array up/down? No set the actual cmd line value
       this.value = history[historyPos] ? history[historyPos] : historyTemp
     }
-
   }
 
   function processNewCommand (e) {
@@ -95,7 +92,7 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
       if (this.value && this.value.trim()) {
         var args = this.value.split(/\s/)
         var cmd = args[0].toLowerCase()
-        args = args.splice(1); // Remove cmd from arg list.
+        args = args.splice(1) // Remove cmd from arg list.
       }
 
       switch (cmd) {
@@ -105,12 +102,12 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
             writeOutput('Usage: cat resume.txt')
             break
           }
-          writeOutput(FILES_OUTPUT[url] !== undefined ? FILES_OUTPUT[url]: `cat: ${url}: No such file or directory`)
+          writeOutput(FILES_OUTPUT[url] !== undefined ? FILES_OUTPUT[url] : `cat: ${url}: No such file or directory`)
           break
         case 'clear':
           output.innerHTML = ''
           this.value = ''
-          writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`)  // Basically new init()
+          writeOutput(`Jonas Scholz | Terminal</h2><p>${new Date()}</p><p>Enter "help" for more information!</p>`) // Basically new init()
           return
         case 'date':
           writeOutput(new Date())
@@ -139,10 +136,25 @@ var Terminal = Terminal || function (cmdLineContainer, outputContainer) {
 
   return {
     init: function () {
-      writeOutput(`Jonas Scholz | Terminal</h2><p id="date">${new Date()}</p><p>Enter "help" for more information! <a href="text.html">Text only version</a></p>`)
+      writeOutput(`Jonas Scholz | Terminal</h2><p id="date">${new Date()}</p><p>Enter "help" for more information! <button id="text-only">Click if you only want to read the text</button></p>`)
       setInterval(function () {
-        document.getElementById("date").innerHTML = new Date();
-      }, 1000);
+        document.getElementById('date').innerHTML = new Date()
+      }, 1000)
+
+      document.getElementById('text-only').addEventListener('click', function () {
+
+        writeOutput('<h3>about me</h3>')
+        writeOutput(FILES_OUTPUT['about.txt'])
+
+        writeOutput('<h3>resume</h3>')
+        writeOutput(FILES_OUTPUT['resume.txt'])
+
+        writeOutput('<h3>contact</h3>')
+        writeOutput(FILES_OUTPUT['contact.txt'])
+
+        writeOutput('<h3>source</h3>')
+        writeOutput(FILES_OUTPUT['source.txt'])
+      })
     }
   }
 }

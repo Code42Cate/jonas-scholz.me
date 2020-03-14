@@ -87,6 +87,16 @@ body {
   column-width: 100px;
 }
 
+button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font-family: Inconsolata, monospace;
+  color: #0bc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 a {
   color: #0bc;
 }
